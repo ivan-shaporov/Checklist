@@ -9,6 +9,7 @@ A simple, persistent, real-time shopping list web app that works on Android and 
 * **Shared State**: Syncs between multiple users in near real-time.
 * **Zero Backend Code**: Connects directly from the browser to Azure Table Storage using a SAS token.
 * **Privacy Focused**: Your data lives in your own Azure Storage account.
+* **Edit Mode**: Toggle between a clean view-only list and an editable interface.
 
 ## Architecture
 
@@ -22,18 +23,26 @@ A simple, persistent, real-time shopping list web app that works on Android and 
 
 1. Create an **Azure Storage Account**.
 2. Create a **Table** (e.g., named `shopping-list`).
-3. Generate a **SAS Token** for the table with the following permissions:
-    * **Allowed Services**: Table
-    * **Allowed Resource Types**: Service, Container, Object
-    * **Allowed Permissions**: Read, Add, Update, Delete (Write is not strictly needed if you use Update/Merge, but good to have).
-    * **Expiry**: Set it for a long duration (e.g., 1 year).
-4. Copy the **Table Service SAS URL**. It should look like:
+3. **Security Best Practice (Recommended)**: Use **Stored Access Policies**.
+    *   Go to the **Access Policy** blade for your Table.
+    *   Create a policy (e.g., `shoppingpolicy`) with a start and expiry time.
+    *   Generating SAS tokens linked to a policy allows you to revoke access later by modifying the policy, without changing the URLs on everyone's devices.
+
+4. Generate **SAS Tokens** (linked to your policy if created):
+    *   **Standard Access** (for daily shopping):
+        *   Permissions: **Read**, **Update** (allows checking off items).
+        *   Use this for the standard "View Mode" URL.
+    *   **Admin Access** (for managing the list):
+        *   Permissions: **Read**, **Add**, **Update**, **Delete**.
+        *   Use this for the "Edit Mode" URL.
+
+5. Copy the **Table Service SAS URL**. It should look like:
     `https://<your-account>.table.core.windows.net/shopping-list?sv=...&sig=...`
-5. **Enable CORS**: By default, browsers block requests to Azure Table Storage. You must enable CORS on your Storage Account.
+6. **Enable CORS**: By default, browsers block requests to Azure Table Storage. You must enable CORS on your Storage Account.
     * Go to **CORS** settings in your Storage Account (under Settings > Resource sharing or CORS).
     * Add a rule for the **Table service**:
         * **Allowed origins**: `*` (or your specific domain like `https://myapp.pages.dev`).
-        * **Allowed methods**: `GET`, `PUT`, `MERGE`, `OPTIONS`.
+        * **Allowed methods**: `GET`, `PUT`, `MERGE`, `DELETE`, `OPTIONS`.
         * **Allowed headers**: `*`.
         * **Exposed headers**: `*`.
         * **Max age**: `86400`.
@@ -50,6 +59,24 @@ A simple, persistent, real-time shopping list web app that works on Android and 
    https://<your-website>/index.html#<YOUR_SAS_URL>
    ```
 
+## Usage
+
+### View Mode
+By default, the list is in "View Mode". You can check and uncheck items, but you cannot add or delete them. This is great for shopping to avoid accidental edits.
+
+URL format:
+`https://<your-website>/index.html#<YOUR_SAS_URL>`
+
+### Edit Mode
+To add or delete items, append `?edit` **before** the hash (`#`).
+
+URL format:
+`https://<your-website>/index.html?edit#<YOUR_SAS_URL>`
+
+*   **Add Item**: Type in the text box and press Enter or click "Add".
+*   **Delete Item**: Click the "Delete" button next to an item (requires confirmation).
+
+
    **Example:**
    `https://myshoppinglist.web.core.windows.net/index.html#https://mystorage.table.core.windows.net/shoppinglist?sv=2019-02-02&sig=...`
 
@@ -57,5 +84,5 @@ A simple, persistent, real-time shopping list web app that works on Android and 
 
 ## Managing Items
 
-* **Editing**: The app currently does not support adding, editing, or deleting items via the UI.
+* **Editing**: The app currently does not support editing items via the UI.
 * **Admin**: You can manage the list items (add new ones, change text, delete old ones) directly in the Azure Table using tools like [Microsoft Azure Storage Explorer](https://azure.microsoft.com/en-us/products/storage/storage-explorer/) or the Azure Portal.
