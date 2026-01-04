@@ -13,13 +13,13 @@
             "id": "resourceGroup",
             "type": "promptString",
             "description": "Enter the Resource Group name",
-            "default": "checklist"
+            "default": "synclist"
         },
         {
             "id": "storageAccountName",
             "type": "promptString",
             "description": "Enter the Storage Account Name (globally unique)",
-            "default": "checklist"
+            "default": "synclist"
         }
     ]
 }

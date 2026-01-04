@@ -1,5 +1,5 @@
 @description('The name of the Storage Account. Must be globally unique and max 24 chars.')
-param storageAccountName string = 'checklist'
+param storageAccountName string = 'synclist'
 
 @description('The location for all resources.')
 param location string = resourceGroup().location

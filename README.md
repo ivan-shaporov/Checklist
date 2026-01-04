@@ -1,4 +1,4 @@
-# Shared Checklist
+# Synclist
 
 > **Disclaimer**: This project is 100% vibecoded.
 
@@ -32,7 +32,7 @@ This project includes a Bicep template that automates the entire infrastructure 
   * Allowed Origins: `*` (Allows access from any domain, including your static site).
   * Allowed Methods: `GET`, `HEAD`, `MERGE`, `POST`, `OPTIONS`, `PUT`, `DELETE`.
   * Max Age: `200` seconds.
-* **Creates the `checklist` table**.
+* **Creates the `synclist` table**.
 * **Sets up Stored Access Policies** (Best Practice):
   * `webfulledit`: Permissions `raud` (Read, Add, Update, Delete). Use this for Edit mode.
   * `webqueryupdate`: Permissions `ru` (Read, Update). Use this for standard View mode.
@@ -52,7 +52,7 @@ This project includes a Bicep template that automates the entire infrastructure 
 1. Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`).
 2. Type **"Tasks: Run Task"**.
 3. Select **"Deploy Bicep"**.
-4. Enter the **Resource Group** name (e.g., `checklist`).
+4. Enter the **Resource Group** name (e.g., `synclist`).
 5. Enter a globally unique **Storage Account Name** (e.g., `mysharedlist123`).
 
 ### Option 2: Azure CLI
@@ -76,7 +76,7 @@ This project includes a Bicep template that automates the entire infrastructure 
 After deployment, you need to generate a SAS token to allow the app to access the database. The Bicep template has already created the necessary security policies (`webfulledit` and `webqueryupdate`).
 
 1. Go to the **Azure Portal** > Your Storage Account > **Storage Browser** > **Tables**.
-2. Select the table (e.g., `checklist`).
+2. Select the table (e.g., `synclist`).
 3. Click **Access Policy** to verify the policies exist.
 4. Use **Azure Storage Explorer** or the **Azure Portal** to generate a SAS token:
 
@@ -85,7 +85,7 @@ After deployment, you need to generate a SAS token to allow the app to access th
    * **Access Policy**: Select `webfulledit` (for full access) or `webqueryupdate` (for standard access).
    * **Generate**.
 
-5. Copy the **Table Service SAS URL** (the full URL, e.g., `https://<account>.table.core.windows.net/checklist?sv=...`).
+5. Copy the **Table Service SAS URL** (the full URL, e.g., `https://<account>.table.core.windows.net/synclist?sv=...`).
 
 ### 3. Construct Access URL
 
@@ -98,7 +98,7 @@ Format:
 `[Static Website URL]/#[SAS Token]`
 
 Example:
-`https://mychecklist.z22.web.core.windows.net/#https://mystorage.table.core.windows.net/checklist?sv=2019-02-02&tn=checklist&sig=...`
+`https://mychecklist.z22.web.core.windows.net/#https://mystorage.table.core.windows.net/synclist?sv=2019-02-02&tn=synclist&sig=...`
 
 > **Tip**: Bookmark this URL on your devices. The SAS token remains in your browser's hash fragment and is never sent to the hosting server.
 
@@ -122,7 +122,7 @@ URL format:
 * **Delete Item**: Click the "Delete" button next to an item (requires confirmation).
 
   **Example:**
-  `https://mychecklist.web.core.windows.net/index.html#https://mystorage.table.core.windows.net/checklist?sv=2019-02-02&sig=...`
+  `https://mychecklist.web.core.windows.net/index.html#https://mystorage.table.core.windows.net/synclist?sv=2019-02-02&sig=...`
 
 ## Managing Items
 
